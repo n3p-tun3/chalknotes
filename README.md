@@ -10,7 +10,7 @@ Self-hostable Next.js + Notion blog boilerplate.
 - Notion API via `@notionhq/client`
 - Vercel-friendly ISR and revalidation endpoint
 
-## What this MVP includes
+## Features
 
 - Home page with published posts list
 - Dynamic post route at `/blog/[slug]`
@@ -18,7 +18,7 @@ Self-hostable Next.js + Notion blog boilerplate.
 - RSS feed at `/rss.xml`
 - Sitemap generation
 - On-demand revalidation endpoint (`POST /api/revalidate`)
-- Image adapter layer with Option A enabled (direct Notion image URLs)
+- Custom Notion block renderer with rich text support
 
 ## Notion database schema
 
@@ -46,19 +46,19 @@ Only records where `Status` is `Published` and `PublishedAt` is in the past are 
 | `Excerpt` | `rich_text` | Optional | `This is the post summary.` | Used on home list cards and RSS description fallback. |
 | `Cover` | `files` | Optional | (image file) | Used for social preview image metadata. |
 
-### Status values (MVP recommendation)
+### Status values
 
-Create these status options in Notion:
+Create these options in the Status column in Notion:
 
 - `Draft`
 - `Published`
 - `Archived`
 
-For now, only `Published` is rendered on the site. Draft preview links are planned later.
+Only rows set to `Published` will be publicly rendered on the site.
 
 ### What each Notion page should contain
 
-Inside each database row, the page content is your article body. For MVP, these blocks are rendered well:
+Inside each database row, the page content is your article body. These blocks are fully supported:
 
 - Paragraph
 - Headings (H1, H2, H3)
@@ -158,16 +158,11 @@ It validates:
 Trigger refresh after content updates:
 
 ```bash
-curl -X POST "http://localhost:3000/api/revalidate?secret=YOUR_SECRET"
+curl -X POST "https://your-domain.com/api/revalidate?secret=YOUR_SECRET"
 ```
 
-## Deploy on Vercel
+## Deploying on Vercel
 
-1. Import this repo into Vercel.
-2. Add all environment variables from `.env.example`.
-3. Deploy.
-
-## Notes
-
-- MVP image mode uses direct Notion-hosted URLs through an adapter in `lib/images/adapter.ts`.
-- We can later swap adapter strategy to proxy/cache/download without changing page components.
+1. Import this repository into Vercel.
+2. Add all environment variables from `.env.local` to your Vercel project settings.
+3. Deploy!
