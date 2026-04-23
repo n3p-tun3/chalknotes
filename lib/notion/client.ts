@@ -1,9 +1,11 @@
 import { Client } from "@notionhq/client";
 
+export function getNotionDatabaseId(): string | null {
+  return process.env.NOTION_DATABASE_ID || null;
+}
+
 export function isNotionConfigured(): boolean {
-  return Boolean(
-    process.env.NOTION_API_KEY && process.env.NOTION_DATABASE_ID,
-  );
+  return Boolean(process.env.NOTION_API_KEY && getNotionDatabaseId());
 }
 
 export function getNotionClient(): Client | null {

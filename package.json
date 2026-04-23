@@ -6,10 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "notion:check": "node --env-file=.env.local scripts/notion-check.mjs"
   },
   "dependencies": {
-    "@notionhq/client": "^5.16.0",
+    "@notionhq/client": "2.2.14",
     "next": "16.2.2",
     "react": "19.2.4",
     "react-dom": "19.2.4"

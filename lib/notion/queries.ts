@@ -1,14 +1,54 @@
+import { APIResponseError } from "@notionhq/client";
+import { cache } from "react";
 import type {
   BlockObjectResponse,
   PageObjectResponse,
-  QueryDataSourceParameters,
+  QueryDatabaseParameters,
 } from "@notionhq/client/build/src/api-endpoints";
 
 import { mapBlockToContent, mapPageToSummary, isPublished } from "@/lib/notion/mapper";
-import { getNotionClient, isNotionConfigured } from "@/lib/notion/client";
+import { getNotionClient, getNotionDatabaseId, isNotionConfigured } from "@/lib/notion/client";
+import { notionSchema } from "@/lib/notion/schema";
 import type { BlogPost, BlogPostSummary, NotionBlock } from "@/lib/types";
 
 const DB_PAGE_SIZE = 100;
+
+function pageBelongsToDatabase(page: PageObjectResponse, databaseId: string): boolean {
+  return (
+    page.parent.type === "database_id" &&
+    page.parent.database_id === databaseId
+  );
+}
+
+async function queryPagesBySearch(
+  notion: NonNullable<ReturnType<typeof getNotionClient>>,
+  databaseId: string,
+): Promise<PageObjectResponse[]> {
+  const pages: PageObjectResponse[] = [];
+  let nextCursor: string | undefined;
+
+  do {
+    const response = await notion.search({
+      query: "",
+      filter: {
+        property: "object",
+        value: "page",
+      },
+      page_size: DB_PAGE_SIZE,
+      start_cursor: nextCursor,
+    });
+
+    for (const result of response.results) {
+      if (asPageObject(result) && pageBelongsToDatabase(result, databaseId)) {
+        pages.push(result);
+      }
+    }
+
+    nextCursor = response.has_more ? response.next_cursor ?? undefined : undefined;
+  } while (nextCursor);
+
+  return pages;
+}
 
 function asPageObject(entry: unknown): entry is PageObjectResponse {
   return Boolean(
@@ -29,13 +69,13 @@ function asBlockObject(entry: unknown): entry is BlockObjectResponse {
   );
 }
 
-async function queryAllDatabasePages(): Promise<PageObjectResponse[]> {
+const queryAllDatabasePages = cache(async (): Promise<PageObjectResponse[]> => {
   if (!isNotionConfigured()) {
     return [];
   }
 
   const notion = getNotionClient();
-  const databaseId = process.env.NOTION_DATABASE_ID;
+  const databaseId = getNotionDatabaseId();
 
   if (!notion || !databaseId) {
     return [];
@@ -43,21 +83,50 @@ async function queryAllDatabasePages(): Promise<PageObjectResponse[]> {
 
   const pages: PageObjectResponse[] = [];
   let nextCursor: string | undefined;
+  let usePublishedAtSort = true;
 
   do {
-    const payload: QueryDataSourceParameters = {
-      data_source_id: databaseId,
+    const payload: QueryDatabaseParameters = {
+      database_id: databaseId,
       page_size: DB_PAGE_SIZE,
       start_cursor: nextCursor,
-      sorts: [
-        {
-          property: "PublishedAt",
-          direction: "descending",
-        },
-      ],
+      ...(usePublishedAtSort
+        ? {
+            sorts: [
+              {
+                property: notionSchema.publishedAt,
+                direction: "descending" as const,
+              },
+            ],
+          }
+        : {}),
     };
 
-    const response = await notion.dataSources.query(payload);
+    let response;
+
+    try {
+      response = await notion.databases.query(payload);
+    } catch (error) {
+      if (
+        error instanceof APIResponseError &&
+        error.code === "object_not_found"
+      ) {
+        console.warn(
+          "Notion database query unavailable for this database ID. Falling back to search-based page discovery.",
+        );
+        return queryPagesBySearch(notion, databaseId);
+      }
+
+      if (usePublishedAtSort) {
+        usePublishedAtSort = false;
+        console.warn(
+          `Notion sort fallback: could not sort by property \"${notionSchema.publishedAt}\". Retrying without remote sort.`,
+        );
+        continue;
+      }
+
+      throw error;
+    }
 
     for (const result of response.results) {
       if (asPageObject(result)) {
@@ -69,7 +138,7 @@ async function queryAllDatabasePages(): Promise<PageObjectResponse[]> {
   } while (nextCursor);
 
   return pages;
-}
+});
 
 export async function listPublishedPosts(): Promise<BlogPostSummary[]> {
   const allPages = await queryAllDatabasePages();

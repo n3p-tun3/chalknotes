@@ -4,6 +4,7 @@ import type {
 } from "@notionhq/client/build/src/api-endpoints";
 
 import { resolveImageUrl } from "@/lib/images/adapter";
+import { notionFilters, notionSchema } from "@/lib/notion/schema";
 import type { BlogPostSummary, NotionBlock } from "@/lib/types";
 
 function richTextToPlainText(
@@ -26,7 +27,7 @@ function getProperty(
 }
 
 function getTitle(page: PageObjectResponse): string {
-  const titleProperty = getProperty(page, "Title");
+  const titleProperty = getProperty(page, notionSchema.title);
 
   if (titleProperty && titleProperty.type === "title") {
     return richTextToPlainText(titleProperty.title) || "Untitled";
@@ -36,7 +37,7 @@ function getTitle(page: PageObjectResponse): string {
 }
 
 function getSlug(page: PageObjectResponse): string {
-  const slugProperty = getProperty(page, "Slug");
+  const slugProperty = getProperty(page, notionSchema.slug);
 
   if (slugProperty && slugProperty.type === "rich_text") {
     const rawSlug = richTextToPlainText(slugProperty.rich_text);
@@ -53,7 +54,7 @@ function getSlug(page: PageObjectResponse): string {
 }
 
 function getStatus(page: PageObjectResponse): string {
-  const statusProperty = getProperty(page, "Status");
+  const statusProperty = getProperty(page, notionSchema.status);
 
   if (statusProperty?.type === "status") {
     return statusProperty.status?.name ?? "";
@@ -67,7 +68,7 @@ function getStatus(page: PageObjectResponse): string {
 }
 
 function getPublishedAt(page: PageObjectResponse): string {
-  const publishedAtProperty = getProperty(page, "PublishedAt");
+  const publishedAtProperty = getProperty(page, notionSchema.publishedAt);
 
   if (publishedAtProperty?.type === "date") {
     return publishedAtProperty.date?.start ?? page.created_time;
@@ -77,7 +78,7 @@ function getPublishedAt(page: PageObjectResponse): string {
 }
 
 function getTags(page: PageObjectResponse): string[] {
-  const tagsProperty = getProperty(page, "Tags");
+  const tagsProperty = getProperty(page, notionSchema.tags);
 
   if (tagsProperty?.type === "multi_select") {
     return tagsProperty.multi_select.map((item) => item.name);
@@ -87,7 +88,7 @@ function getTags(page: PageObjectResponse): string[] {
 }
 
 function getExcerpt(page: PageObjectResponse): string {
-  const excerptProperty = getProperty(page, "Excerpt");
+  const excerptProperty = getProperty(page, notionSchema.excerpt);
 
   if (excerptProperty?.type === "rich_text") {
     return richTextToPlainText(excerptProperty.rich_text);
@@ -97,7 +98,7 @@ function getExcerpt(page: PageObjectResponse): string {
 }
 
 function getCoverImage(page: PageObjectResponse): string | null {
-  const coverProperty = getProperty(page, "Cover");
+  const coverProperty = getProperty(page, notionSchema.cover);
 
   if (coverProperty?.type === "files") {
     const firstFile = coverProperty.files[0];
@@ -139,7 +140,10 @@ export function isPublished(page: PageObjectResponse): boolean {
   const status = getStatus(page);
   const publishedAt = new Date(getPublishedAt(page));
 
-  return status.toLowerCase() === "published" && publishedAt <= new Date();
+  return (
+    status.toLowerCase() === notionFilters.publishedStatus.toLowerCase() &&
+    publishedAt <= new Date()
+  );
 }
 
 export function mapBlockToContent(block: BlockObjectResponse): NotionBlock | null {
