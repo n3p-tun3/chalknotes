@@ -91,7 +91,7 @@ Then write your article in the page body below those properties.
 	- Click Submit, copy the `Internal Integration Token`, and paste it into `NOTION_API_KEY` in your `.env.local` file.
 
 2. **Duplicate the Template**  
-	- Open the [Chalknotes Starter Template]([INSERT_TEMPLATE_URL_HERE]) and duplicate it into your own workspace.
+	- Open the [Chalknotes Starter Template](https://chalknotes.notion.site/34b732a303f28092a816e03636ad14a1?v=34b732a303f28073bef7000c963c6306) and duplicate it into your own workspace.
 
 3. **Share & Connect Datebase**  
 	- In your duplicated Notion database, click the three dots `...` in the top right.
