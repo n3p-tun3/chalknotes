@@ -33,12 +33,13 @@ export default async function Home() {
         {!configured ? (
           <section className="rounded-lg border border-amber-300 bg-amber-50 p-6 text-amber-900">
             <h2 className="text-xl font-semibold">Finish setup</h2>
-            <p className="mt-3 leading-7">
-              Add <span className="font-semibold">NOTION_API_KEY</span> and
-              <span className="font-semibold"> NOTION_DATABASE_ID</span> to your
-              environment variables to load published posts.
-            </p>
-            <p className="mt-3 text-sm">Then follow the setup steps in README.md.</p>
+            <ol className="mt-4 list-decimal space-y-2 pl-5 leading-7 marker:text-amber-600/80">
+              <li>Duplicate the <a href="[INSERT_TEMPLATE_URL_HERE]" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-amber-700">Chalknotes Notion Template</a> to your workspace.</li>
+              <li>Create a new integration at <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-amber-700">notion.so/my-integrations</a>, copy the token, and paste it into <code className="rounded bg-amber-200/50 px-1 py-0.5 font-mono text-[0.9em] font-medium">NOTION_API_KEY</code>.</li>
+              <li>Share your Notion database with the integration via the Connections menu.</li>
+              <li>Copy the full URL of your database page and paste it into <code className="rounded bg-amber-200/50 px-1 py-0.5 font-mono text-[0.9em] font-medium">NOTION_DATABASE_ID</code>.</li>
+            </ol>
+            <p className="mt-4 text-sm font-medium">Add those to your <code className="rounded bg-amber-200/50 px-1 py-0.5 font-mono text-[0.9em]">.env.local</code> file and refresh.</p>
           </section>
         ) : null}
 

@@ -83,24 +83,23 @@ Use this as a starter when creating your first post:
 
 Then write your article in the page body below those properties.
 
-## Get your Notion keys and IDs
+## Get your Notion setup
 
-1. Create a Notion integration token.
-	- Open [https://www.notion.so/profile/integrations](https://www.notion.so/profile/integrations)
-	- Click `New integration`
-	- Give it a name and workspace access
-	- Copy the token and set it as `NOTION_API_KEY`
+1. **Get the Integration Key**  
+	- Head over to [notion.so/my-integrations](https://www.notion.so/my-integrations)
+	- Click `New integration` and give it a name (e.g. "Chalknotes")
+	- Click Submit, copy the `Internal Integration Token`, and paste it into `NOTION_API_KEY` in your `.env.local` file.
 
-2. Share your content database with the integration.
-	- Open your blog database in Notion
-	- Click `Share`
-	- Invite your integration so it can read the database
+2. **Duplicate the Template**  
+	- Open the [Chalknotes Starter Template]([INSERT_TEMPLATE_URL_HERE]) and duplicate it into your own workspace.
 
-3. Get the database ID.
-	- Open the database as a full page
-	- Copy the URL
-	- The 32-character ID in the URL is your database ID
-	- Put it in `NOTION_DATABASE_ID`
+3. **Share & Connect Datebase**  
+	- In your duplicated Notion database, click the three dots `...` in the top right.
+	- Under `Connections`, find the integration you created in step 1 and add it.
+  
+4. **Paste Database URL**  
+	- Finally, copy the full URL of your duplicated database page straight from your browser.
+	- Paste the entire URL into `NOTION_DATABASE_ID` in your `.env.local`. (Chalknotes will automatically extract the 32-character database ID for you).
 
 ## Local setup
 
@@ -112,8 +111,10 @@ cp .env.example .env.local
 
 2. Fill these values in `.env.local`:
 
-- `NOTION_API_KEY`
-- `NOTION_DATABASE_ID`
+- `NOTION_API_KEY` (Paste the Internal Integration Secret)
+- `NOTION_DATABASE_ID` (Paste the full Notion database URL from your browser)
+
+Note: Chalknotes runs automatic regex over the database URL, so you don't need to manually slice the ID out of the string!
 - `NEXT_PUBLIC_SITE_URL`
 - `REVALIDATE_SECRET`
 
@@ -144,10 +145,11 @@ pnpm notion:check
 
 It validates:
 
-- Required env vars exist
-- Notion database ID is reachable
+- Required env vars exist (`NOTION_API_KEY`, `NOTION_DATABASE_ID`)
+- The target database URL parses accurately
+- Database is shared and reachable
 - Rows can be queried
-- Sample rows pass publish checks (status + publish date)
+- Sample rows pass publish tests (status + publish date)
 
 ## Revalidation
 

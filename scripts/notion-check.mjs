@@ -94,8 +94,8 @@ function describeApiError(error) {
 
   if (error.code === "object_not_found") {
     lines.push("Likely causes:");
-    lines.push("- Wrong database ID (ID copied from the wrong URL segment)");
-    lines.push("- Database not shared with integration");
+    lines.push("- Wrong database ID (Ensure you pasted the full database page URL into .env.local)");
+    lines.push("- Database not shared with integration (Did you add the integration to the database Connections menu?)");
     lines.push("- Integration belongs to a different workspace");
   }
 
@@ -159,9 +159,16 @@ async function queryRowsWithFallback(notion, databaseId) {
   }
 }
 
+function getDatabaseId() {
+  const raw = value("NOTION_DATABASE_ID");
+  if (!raw) return "";
+  const match = raw.match(/[a-f0-9]{32}/i);
+  return match ? match[0] : "";
+}
+
 async function main() {
   const apiKey = value("NOTION_API_KEY");
-  const databaseId = value("NOTION_DATABASE_ID");
+  const databaseId = getDatabaseId();
 
   const schema = {
     title: value("NOTION_PROP_TITLE", "Title"),

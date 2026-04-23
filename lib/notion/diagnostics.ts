@@ -32,7 +32,7 @@ export async function getNotionDiagnostic(): Promise<NotionDiagnostic> {
       level: "error",
       title: "Missing Notion configuration",
       details: [
-        "Set NOTION_API_KEY and NOTION_DATABASE_ID in .env.local.",
+        "Set NOTION_API_KEY and paste your Notion Database URL in NOTION_DATABASE_ID in .env.local.",
       ],
     };
   }
@@ -42,7 +42,7 @@ export async function getNotionDiagnostic(): Promise<NotionDiagnostic> {
       level: "error",
       title: "Missing NOTION_API_KEY",
       details: [
-        "Create an internal integration in Notion and paste the token into .env.local.",
+        "Create an integration at notion.so/my-integrations and paste the token into .env.local.",
       ],
     };
   }
@@ -52,7 +52,7 @@ export async function getNotionDiagnostic(): Promise<NotionDiagnostic> {
       level: "error",
       title: "Missing NOTION_DATABASE_ID",
       details: [
-        "Set NOTION_DATABASE_ID in .env.local.",
+        "Copy the URL of your duplicated Notion Database and paste it into NOTION_DATABASE_ID in .env.local.",
       ],
     };
   }
@@ -136,10 +136,11 @@ export async function getNotionDiagnostic(): Promise<NotionDiagnostic> {
       if (error.code === "object_not_found") {
         return {
           level: "error",
-          title: "Table not found",
+          title: "Database not found",
           details: [
-            "The database ID does not exist in this workspace, or the table is not shared with your integration.",
-            "Open your table page, click Share/Connections, and add your integration.",
+            "The Notion integration can't find your database.",
+            "Make sure you shared the database with your integration via the Connections menu.",
+            "Also ensure you copied the full database page URL into .env.local.",
           ],
         };
       }
