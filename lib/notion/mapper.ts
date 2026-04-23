@@ -5,7 +5,19 @@ import type {
 
 import { resolveImageUrl } from "@/lib/images/adapter";
 import { notionFilters, notionSchema } from "@/lib/notion/schema";
-import type { BlogPostSummary, NotionBlock } from "@/lib/types";
+import type { BlogPostSummary, NotionBlock, RichTextItem } from "@/lib/types";
+
+function mapRichText(richText: any[] | undefined): RichTextItem[] {
+  if (!richText || richText.length === 0) {
+    return [];
+  }
+
+  return richText.map((rt) => ({
+    plainText: rt.plain_text,
+    href: rt.href,
+    annotations: rt.annotations,
+  }));
+}
 
 function richTextToPlainText(
   richText:
@@ -152,56 +164,56 @@ export function mapBlockToContent(block: BlockObjectResponse): NotionBlock | nul
       return {
         id: block.id,
         type: "paragraph",
-        text: richTextToPlainText(block.paragraph.rich_text),
+        richText: mapRichText(block.paragraph.rich_text),
       };
     }
     case "heading_1": {
       return {
         id: block.id,
         type: "heading_1",
-        text: richTextToPlainText(block.heading_1.rich_text),
+        richText: mapRichText(block.heading_1.rich_text),
       };
     }
     case "heading_2": {
       return {
         id: block.id,
         type: "heading_2",
-        text: richTextToPlainText(block.heading_2.rich_text),
+        richText: mapRichText(block.heading_2.rich_text),
       };
     }
     case "heading_3": {
       return {
         id: block.id,
         type: "heading_3",
-        text: richTextToPlainText(block.heading_3.rich_text),
+        richText: mapRichText(block.heading_3.rich_text),
       };
     }
     case "quote": {
       return {
         id: block.id,
         type: "quote",
-        text: richTextToPlainText(block.quote.rich_text),
+        richText: mapRichText(block.quote.rich_text),
       };
     }
     case "bulleted_list_item": {
       return {
         id: block.id,
         type: "bulleted_list_item",
-        text: richTextToPlainText(block.bulleted_list_item.rich_text),
+        richText: mapRichText(block.bulleted_list_item.rich_text),
       };
     }
     case "numbered_list_item": {
       return {
         id: block.id,
         type: "numbered_list_item",
-        text: richTextToPlainText(block.numbered_list_item.rich_text),
+        richText: mapRichText(block.numbered_list_item.rich_text),
       };
     }
     case "code": {
       return {
         id: block.id,
         type: "code",
-        text: richTextToPlainText(block.code.rich_text),
+        richText: mapRichText(block.code.rich_text),
         language: block.code.language,
       };
     }

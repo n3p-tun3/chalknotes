@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { RichText } from "@/components/rich-text";
 import { resolveImageUrl } from "@/lib/images/adapter";
 import type { NotionBlock } from "@/lib/types";
 
@@ -23,7 +24,7 @@ export function NotionBlockRenderer({ blocks }: Props) {
       elements.push(
         <ul key={block.id} className="my-6 list-disc space-y-2 pl-6 text-stone-800">
           {items.map((item) => (
-            <li key={item.id}>{item.type === "bulleted_list_item" ? item.text : ""}</li>
+            <li key={item.id}>{item.type === "bulleted_list_item" ? <RichText text={item.richText} /> : null}</li>
           ))}
         </ul>,
       );
@@ -40,7 +41,7 @@ export function NotionBlockRenderer({ blocks }: Props) {
       elements.push(
         <ol key={block.id} className="my-6 list-decimal space-y-2 pl-6 text-stone-800">
           {items.map((item) => (
-            <li key={item.id}>{item.type === "numbered_list_item" ? item.text : ""}</li>
+            <li key={item.id}>{item.type === "numbered_list_item" ? <RichText text={item.richText} /> : null}</li>
           ))}
         </ol>,
       );
@@ -51,28 +52,28 @@ export function NotionBlockRenderer({ blocks }: Props) {
       case "paragraph":
         elements.push(
           <p key={block.id} className="my-5 text-lg leading-8 text-stone-800">
-            {block.text}
+            <RichText text={block.richText} />
           </p>,
         );
         break;
       case "heading_1":
         elements.push(
           <h1 key={block.id} className="mt-12 text-4xl font-semibold tracking-tight text-stone-900">
-            {block.text}
+            <RichText text={block.richText} />
           </h1>,
         );
         break;
       case "heading_2":
         elements.push(
           <h2 key={block.id} className="mt-10 text-3xl font-semibold tracking-tight text-stone-900">
-            {block.text}
+            <RichText text={block.richText} />
           </h2>,
         );
         break;
       case "heading_3":
         elements.push(
           <h3 key={block.id} className="mt-8 text-2xl font-semibold tracking-tight text-stone-900">
-            {block.text}
+            <RichText text={block.richText} />
           </h3>,
         );
         break;
@@ -82,7 +83,7 @@ export function NotionBlockRenderer({ blocks }: Props) {
             key={block.id}
             className="my-8 border-l-4 border-stone-400 bg-stone-100 px-5 py-3 text-lg italic text-stone-700"
           >
-            {block.text}
+            <RichText text={block.richText} />
           </blockquote>,
         );
         break;
@@ -92,7 +93,7 @@ export function NotionBlockRenderer({ blocks }: Props) {
             key={block.id}
             className="my-8 overflow-x-auto rounded-md border border-stone-300 bg-stone-950 p-4 text-sm leading-6 text-stone-100"
           >
-            <code>{block.text}</code>
+            <code><RichText text={block.richText} /></code>
           </pre>,
         );
         break;
