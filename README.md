@@ -118,6 +118,8 @@ Note: Chalknotes runs automatic regex over the database URL, so you don't need t
 - `NEXT_PUBLIC_SITE_URL`
 - `REVALIDATE_SECRET`
 
+3. Make it yours: open `site.config.ts` located at the root of the project and update the title, author details, and homepage hero settings.
+
 Optional overrides if your property names differ from defaults:
 
 - `NOTION_PROP_TITLE`

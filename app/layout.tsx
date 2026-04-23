@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Instrument_Sans } from "next/font/google";
 
 import { SiteHeader } from "@/components/site-header";
+import { siteConfig } from "@/site.config";
 import "./globals.css";
 
 const headingFont = Cormorant_Garamond({
@@ -18,8 +19,8 @@ const bodyFont = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Chalknotes",
-  description: "A self-hostable Notion-powered blog boilerplate.",
+  title: siteConfig.name,
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
