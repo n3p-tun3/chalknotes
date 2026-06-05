@@ -42,7 +42,7 @@ export default async function Home() {
           <section className="rounded-lg border border-amber-300 bg-amber-50 p-6 text-amber-900">
             <h2 className="text-xl font-semibold">Finish setup</h2>
             <ol className="mt-4 list-decimal space-y-2 pl-5 leading-7 marker:text-amber-600/80">
-              <li>Duplicate the <a href="[INSERT_TEMPLATE_URL_HERE]" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-amber-700">Chalknotes Notion Template</a> to your workspace.</li>
+              <li>Duplicate the <a href="https://chalknotes.notion.site/34b732a303f28092a816e03636ad14a1?v=34b732a303f28073bef7000c963c6306" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-amber-700">Chalknotes Notion Template</a> to your workspace.</li>
               <li>Create a new integration at <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-amber-700">notion.so/my-integrations</a>, copy the token, and paste it into <code className="rounded bg-amber-200/50 px-1 py-0.5 font-mono text-[0.9em] font-medium">NOTION_API_KEY</code>.</li>
               <li>Share your Notion database with the integration via the Connections menu.</li>
               <li>Copy the full URL of your database page and paste it into <code className="rounded bg-amber-200/50 px-1 py-0.5 font-mono text-[0.9em] font-medium">NOTION_DATABASE_ID</code>.</li>

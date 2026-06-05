@@ -1,4 +1,5 @@
 import { listPublishedPosts } from "@/lib/notion/queries";
+import { siteConfig } from "@/site.config";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -30,9 +31,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <rss version="2.0">
       <channel>
-        <title>Chalknotes</title>
+        <title>${escapeXml(siteConfig.name)}</title>
         <link>${SITE_URL}</link>
-        <description>Writing from Notion.</description>
+        <description>${escapeXml(siteConfig.description)}</description>
         ${items}
       </channel>
     </rss>`;
